@@ -57,7 +57,7 @@ bash scripts/calibration/violation_plot.sh
 
 ### Appendix B: Supplementary for Section 2
 
-### Appendix B.4: Numerical experiments
+#### Appendix B.4: Numerical experiments
 
 To reproduce Fig. 7 (a), first run an experiment with:
 
