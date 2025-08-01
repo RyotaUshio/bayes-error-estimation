@@ -32,7 +32,7 @@ def run_experiment(soft_labels, labels, calibrator, n_resamples, bootstrap_metho
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset', type=str, default='cifar10', choices=['cifar10', 'fashion_mnist', 'synthetic'])
+    parser.add_argument('--dataset', type=str, default='cifar10', choices=['cifar10', 'fashion_mnist', 'snli', 'mnli', 'abduptive_nli', 'synthetic'])
     parser.add_argument('--n_resamples', type=int, default=1000)
     parser.add_argument('--bootstrap', type=str, default='BCa', choices=['BCa', 'basic', 'percentile'])
     parser.add_argument('--a', type=float, default=2.0, help='Used only for --dataset synthetic')
@@ -81,3 +81,4 @@ if __name__ == '__main__':
     with open(outfile, 'w') as f:
         json.dump(data, f, indent=4)
     print(f'Results saved to {outfile}')
+    print(f'To visualize the result, run: \nuv run scripts/calibration/plot.py {outfile}')
