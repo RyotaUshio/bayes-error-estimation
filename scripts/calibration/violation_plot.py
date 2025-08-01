@@ -117,7 +117,7 @@ def plot_results(data, args):
                 zorder=zorder,
             )
 
-    clean_value = np.mean(data["results"]["clean"]["point_estimates"])
+    clean_value = float(np.mean(data["results"]["clean"]["point_estimates"]))
     ax.axhline(
         y=clean_value,
         color="black",

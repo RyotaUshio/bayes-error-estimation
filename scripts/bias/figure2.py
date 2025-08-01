@@ -3,7 +3,7 @@
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
-from bias_bounds import B_inner, existing_bias_bound
+from bias_bounds import B_inner, existing_bias_bound # ty: ignore[unresolved-import]
 
 m = 50
 E_list = np.logspace(-4, np.log10(0.5), num=100, base=10)
