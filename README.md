@@ -41,7 +41,7 @@ To conduct an experiment for a specific set of parameter values $(a, b)$, run, e
 uv run scripts/calibration/exp.py --dataset synthetic --a 0.4 --b 0.5
 ```
 
-#### Appendix D.3: Violation of the assumption of Theorem 2
+#### Appendix D.3: Violation of the assumption of Theorem 3
 
 Run the experiments by:
 

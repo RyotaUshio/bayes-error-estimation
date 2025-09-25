@@ -6,7 +6,7 @@ import numpy as np
 
 
 def load_data(args):
-    data = {"spearman_corr": [], "results": {}}
+    data = {"results": {}}
 
     order = [
         "clean",
@@ -24,8 +24,7 @@ def load_data(args):
         with open(file_path, "r") as f:
             file_data = json.load(f)
 
-        spearman_corr = file_data["metadata"]["spearman_corr"]
-        data["spearman_corr"].append(spearman_corr)
+        n_hard_labels = file_data["metadata"]["args"]["n_hard_labels"]
 
         methods = [key for key in order if key in file_data["results"]]
 
@@ -37,7 +36,7 @@ def load_data(args):
                     "point_estimates": [],
                     "low_ci": [],
                     "high_ci": [],
-                    "corrs": [],
+                    "n_hard_labels": [],
                 }
 
             data["results"][method]["point_estimates"].append(
@@ -49,11 +48,13 @@ def load_data(args):
             data["results"][method]["high_ci"].append(
                 method_data["confidence_interval"]["high"]
             )
-            data["results"][method]["corrs"].append(spearman_corr)
+            data["results"][method]["n_hard_labels"].append(n_hard_labels)
 
     for method in data["results"]:
-        sort_indices = np.argsort(data["results"][method]["corrs"])
-        data["results"][method]["corrs"] = np.array(data["results"][method]["corrs"])[
+        sort_indices = np.argsort(data["results"][method]["n_hard_labels"])
+        data["results"][method]["n_hard_labels"] = np.array(
+            data["results"][method]["n_hard_labels"]
+        )[
             sort_indices
         ]
         data["results"][method]["point_estimates"] = np.array(
@@ -84,7 +85,7 @@ def plot_results(data, args):
 
         if args.fancy_errorbar:
             ax.plot(
-                method_data["corrs"],
+                method_data["n_hard_labels"],
                 method_data["point_estimates"],
                 marker="o",
                 linestyle="-",
@@ -93,7 +94,7 @@ def plot_results(data, args):
                 zorder=zorder,
             )
             ax.fill_between(
-                method_data["corrs"],
+                method_data["n_hard_labels"],
                 method_data["low_ci"],
                 method_data["high_ci"],
                 color=color,
@@ -102,7 +103,7 @@ def plot_results(data, args):
             )
         else:
             ax.errorbar(
-                method_data["corrs"],
+                method_data["n_hard_labels"],
                 method_data["point_estimates"],
                 yerr=[
                     method_data["point_estimates"] - method_data["low_ci"],
@@ -131,7 +132,7 @@ def plot_results(data, args):
     ylim = ax.get_ylim()
     ax.set_ylim(0, ylim[1])
 
-    ax.set_xlabel("Spearman's rank correlation coefficient $\\rho$", fontsize=12)
+    ax.set_xlabel("Number of hard labels", fontsize=12)
     ax.set_ylabel("Estimated Bayes error (%)", fontsize=12)
     ax.grid(True, linestyle=":", alpha=0.7)
     ax.legend(loc="lower left", bbox_to_anchor=(1, 0))
