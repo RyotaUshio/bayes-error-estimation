@@ -1,6 +1,7 @@
 import numpy as np
 import numpy.typing as npt
 
+
 def bayes_error(soft_labels: npt.NDArray[np.float32]):
     """
     Compute the Bayes error from the given soft labels.
@@ -11,6 +12,4 @@ def bayes_error(soft_labels: npt.NDArray[np.float32]):
     Returns:
         The Bayes error.
     """
-    return np.mean(
-        np.minimum(soft_labels, 1 - soft_labels)
-    )
+    return np.mean(np.minimum(soft_labels, 1 - soft_labels))

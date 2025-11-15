@@ -54,8 +54,16 @@ if __name__ == '__main__':
     omit = args.omit.split(',')
     labels = [key for key in order if key in data and key not in omit]
     point_estimates = [data[label]['point_estimate'] for label in labels]
-    error_low = [data[label]['point_estimate'] - data[label]['confidence_interval']['low'] for label in labels]
-    error_high = [data[label]['confidence_interval']['high'] - data[label]['point_estimate'] for label in labels]
+    error_low = [
+        data[label]['point_estimate']
+        - data[label]['confidence_interval']['low']
+        for label in labels
+    ]
+    error_high = [
+        data[label]['confidence_interval']['high']
+        - data[label]['point_estimate']
+        for label in labels
+    ]
 
     errors = [error_low, error_high]
 
@@ -63,9 +71,11 @@ if __name__ == '__main__':
 
     plt.figure(**fig_kwargs)
     plt.style.use('ggplot')
-    plt.rcParams.update({
-        'font.size': 14,
-    })
+    plt.rcParams.update(
+        {
+            'font.size': 14,
+        }
+    )
 
     metric_label = 'Estimated Bayes error (%)'
 
@@ -95,7 +105,9 @@ if __name__ == '__main__':
         plt.xticks(x_pos, labels, rotation=45, ha='right')
 
         if args.tick_step:
-            plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(args.tick_step))
+            plt.gca().yaxis.set_major_locator(
+                ticker.MultipleLocator(args.tick_step)
+            )
 
         if args.hline is not None:
             xlim = plt.xlim()
@@ -135,7 +147,9 @@ if __name__ == '__main__':
         plt.yticks(y_pos, labels)
 
         if args.tick_step:
-            plt.gca().xaxis.set_major_locator(ticker.MultipleLocator(args.tick_step))
+            plt.gca().xaxis.set_major_locator(
+                ticker.MultipleLocator(args.tick_step)
+            )
 
         if args.hline is not None:
             ylim = plt.ylim()

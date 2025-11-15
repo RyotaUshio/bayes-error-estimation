@@ -35,3 +35,9 @@ exclude = [
 ]
 
 [tool.pyright]
+
+[tool.ruff]
+line-length = 80
+
+[tool.ruff.format]
+quote-style = "single"
