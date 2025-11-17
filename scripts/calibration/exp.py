@@ -46,6 +46,7 @@ if __name__ == '__main__':
         choices=[
             'cifar10',
             'fashion_mnist',
+            'iclr',
             'snli',
             'mnli',
             'abduptive_nli',

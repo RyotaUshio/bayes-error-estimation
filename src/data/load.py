@@ -2,6 +2,7 @@ from .cifar10 import load_cifar10
 from .fashion_mnist import load_fashion_mnist
 from .synthetic import load_synthetic
 from .chaos_nli import load_chaos_nli
+from .iclr import ICLROptions, load_iclr
 
 
 def load(
@@ -17,6 +18,13 @@ def load(
             return load_cifar10()
         case 'fashion_mnist':
             return load_fashion_mnist()
+        case 'iclr':
+            return load_iclr(
+                ICLROptions(
+                    dataset='iclr',
+                    years=range(2017, 2026),
+                )
+            )
         case 'snli' | 'mnli' | 'abduptive_nli':
             return load_chaos_nli(dataset_name)
         case 'synthetic':
