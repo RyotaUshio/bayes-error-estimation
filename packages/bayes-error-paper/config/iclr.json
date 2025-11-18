@@ -1,0 +1,10 @@
+{
+  "dataset": {
+    "dataset": "iclr",
+    "years": [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
+  },
+  "bootstrap": {
+    "n_resamples": 1000,
+    "method": "basic"
+  }
+}

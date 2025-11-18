@@ -8,6 +8,7 @@ import numpy as np
 from pydantic import BaseModel
 
 from .utils import binarize_hard_labels, binarize_soft_labels, data_cache_dir
+from .types import Datasets
 
 type DatasetName = Literal['snli', 'mnli', 'abduptive_nli']
 
@@ -120,7 +121,7 @@ class ChaosNliOptions(BaseModel):
     dataset: DatasetName
 
 
-def load_chaos_nli(options: ChaosNliOptions):
+def load_chaos_nli(options: ChaosNliOptions) -> Datasets:
     download_chaos_nli_if_not_exists()
     soft_labels, labels, sota_error = load_chaos_nli_from_file(options.dataset)
 
@@ -130,13 +131,3 @@ def load_chaos_nli(options: ChaosNliOptions):
             'labels': labels,
         },
     }
-
-
-# if __name__ == '__main__':
-#     snli = load_chaos_nli('snli')
-#     mnli = load_chaos_nli('mnli')
-#     abduptive_nli = load_chaos_nli('abduptive_nli')
-
-#     print(f'SOTA error for SNLI: {snli["sota_error"]}')
-#     print(f'SOTA error for MNLI: {mnli["sota_error"]}')
-#     print(f'SOTA error for Abduptive NLI: {abduptive_nli["sota_error"]}')

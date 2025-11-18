@@ -10,6 +10,8 @@ from typing import Any, Literal, TypedDict
 import numpy as np
 import openreview
 from pydantic import BaseModel, field_validator
+
+from .types import Datasets
 from .utils import data_cache_dir
 
 
@@ -407,20 +409,21 @@ class ICLROptions(BaseModel):
     @field_validator('years', mode='before')
     @classmethod
     def validate_years(cls, val):
-        if isinstance(val, str):
-            years = set()
-            for part in val.split(','):
-                if '-' in part:
-                    start, end = part.split('-')
-                    years.update(
-                        range(int(start or 2017), int(end or 2025) + 1)
-                    )
-                elif part:
-                    years.add(int(part))
-            return list(years)
+        if not isinstance(val, str):
+            return val
+        years = set()
+        for part in val.split(','):
+            if '-' in part:
+                start, end = part.split('-')
+                years.update(
+                    range(int(start or 2017), int(end or 2025) + 1)
+                )
+            elif part:
+                years.add(int(part))
+        return list(years)
 
 
-def load_iclr(options: ICLROptions):
+def load_iclr(options: ICLROptions) -> Datasets:
     label_pairs = []
 
     for year in options.years:

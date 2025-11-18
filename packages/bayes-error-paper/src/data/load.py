@@ -1,11 +1,13 @@
 from typing import Annotated
 
 from pydantic import Field
+
+from .chaos_nli import ChaosNliOptions, load_chaos_nli
 from .cifar10 import Cifar10Options, load_cifar10
 from .fashion_mnist import FashionMnistOptions, load_fashion_mnist
-from .synthetic import SyntheticOptions, load_synthetic
-from .chaos_nli import ChaosNliOptions, load_chaos_nli
 from .iclr import ICLROptions, load_iclr
+from .synthetic import SyntheticOptions, load_synthetic
+from .types import Datasets
 
 
 type DatasetOptions = Annotated[
@@ -18,7 +20,7 @@ type DatasetOptions = Annotated[
 ]
 
 
-def load(options: DatasetOptions):
+def load(options: DatasetOptions) -> Datasets:
     match options.dataset:
         case 'cifar10':
             return load_cifar10()

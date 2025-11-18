@@ -1,48 +1,63 @@
-from pathlib import Path
-import argparse
 import json
-import numpy as np
+from pathlib import Path
+from typing import Annotated, Literal
+
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import ticker
+from pydantic import Field, TypeAdapter
+from pydantic_settings import BaseSettings, CliPositionalArg, SettingsConfigDict
+
+from .utils.experiment_result import ExperimentResult
+
+
+class PlotOptions(BaseSettings):
+    orientation: Annotated[
+        Literal['vertical', 'horizontal'],
+        Field(
+            description='Bar orientation for the plot. Default is vertical bars; use horizontal for barh.'
+        ),
+    ] = 'vertical'
+    omit: list[str] = []
+    hline: float | None = None
+    figsize: Annotated[
+        tuple[float, float] | None,
+        Field(
+            description='Figure size in inches as WIDTH HEIGHT. Defaults to Matplotlib settings when omitted.'
+        ),
+    ] = None
+    tick_step: Annotated[
+        float | None,
+        Field(
+            description='Major tick spacing for the Estimated Bayes error axis. Defaults to Matplotlib settings when omitted.'
+        ),
+    ] = None
+    ymax: float | None = None
+
+
+class PlotCliArgs(PlotOptions):
+    model_config = SettingsConfigDict(
+        cli_parse_args=True, cli_implicit_flags=True
+    )
+    input: CliPositionalArg[Path]
+    show: bool = False
+
+
 
 def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('input', type=Path)
-    parser.add_argument('-s', '--show', action='store_true')
-    parser.add_argument('--hline', type=float, default=None)
-    parser.add_argument('--omit', type=str, default='')
-    parser.add_argument(
-        '--orientation',
-        choices=['vertical', 'horizontal'],
-        default='vertical',
-        help='Bar orientation for the plot. Default is vertical bars; use horizontal for barh.',
-    )
-    parser.add_argument(
-        '--figsize',
-        type=float,
-        nargs=2,
-        metavar=('WIDTH', 'HEIGHT'),
-        default=None,
-        help='Figure size in inches as WIDTH HEIGHT. Defaults to Matplotlib settings when omitted.',
-    )
-    parser.add_argument(
-        '--tick-step',
-        type=float,
-        default=None,
-        help='Major tick spacing for the Estimated Bayes error axis. Defaults to Matplotlib settings when omitted.',
-    )
-    args = parser.parse_args()
-    return args
+    return PlotCliArgs()  # type: ignore
 
-def main():
-    args = parse_args()
 
-    with open(args.input, 'r') as f:
+def load_results(input_path: Path) -> dict[str, ExperimentResult]:
+    with open(input_path, 'r') as f:
         data = json.load(f)
-
     if 'results' in data:
         data = data['results']
 
+    return TypeAdapter(dict[str, ExperimentResult]).validate_python(data)
+
+
+def plot(results: dict[str, ExperimentResult], options: PlotOptions):
     order = [
         'clean',
         'hard',
@@ -55,23 +70,22 @@ def main():
         'beta',
     ]
 
-    omit = args.omit.split(',')
-    labels = [key for key in order if key in data and key not in omit]
-    point_estimates = [data[label]['point_estimate'] for label in labels]
+    labels = [key for key in order if key in results and key not in options.omit]
+    point_estimates = [results[label]['point_estimate'] for label in labels]
     error_low = [
-        data[label]['point_estimate']
-        - data[label]['confidence_interval']['low']
+        results[label]['point_estimate']
+        - results[label]['confidence_interval']['low']
         for label in labels
     ]
     error_high = [
-        data[label]['confidence_interval']['high']
-        - data[label]['point_estimate']
+        results[label]['confidence_interval']['high']
+        - results[label]['point_estimate']
         for label in labels
     ]
 
     errors = [error_low, error_high]
 
-    plt.figure(figsize=tuple(args.figsize) if args.figsize else None)
+    plt.figure(figsize=options.figsize)
     plt.style.use('ggplot')
     plt.rcParams.update(
         {
@@ -81,7 +95,7 @@ def main():
 
     metric_label = 'Estimated Bayes error (%)'
 
-    if args.orientation == 'vertical':
+    if options.orientation == 'vertical':
         x_pos = np.arange(len(labels))
         plt.bar(
             x_pos,
@@ -106,15 +120,13 @@ def main():
         plt.ylabel(metric_label, fontweight='bold')
         plt.xticks(x_pos, labels, rotation=45, ha='right')
 
-        if args.tick_step:
-            plt.gca().yaxis.set_major_locator(
-                ticker.MultipleLocator(args.tick_step)
-            )
+        if options.tick_step:
+            plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(options.tick_step))
 
-        if args.hline is not None:
+        if options.hline is not None:
             xlim = plt.xlim()
             plt.hlines(
-                args.hline,
+                options.hline,
                 xlim[0],
                 xlim[1],
                 colors='black',
@@ -148,15 +160,13 @@ def main():
         plt.xlabel(metric_label, fontweight='bold')
         plt.yticks(y_pos, labels)
 
-        if args.tick_step:
-            plt.gca().xaxis.set_major_locator(
-                ticker.MultipleLocator(args.tick_step)
-            )
+        if options.tick_step:
+            plt.gca().xaxis.set_major_locator(ticker.MultipleLocator(options.tick_step))
 
-        if args.hline is not None:
+        if options.hline is not None:
             ylim = plt.ylim()
             plt.vlines(
-                args.hline,
+                options.hline,
                 ylim[0],
                 ylim[1],
                 colors='black',
@@ -170,7 +180,19 @@ def main():
     plt.gca().spines['top'].set_visible(False)
     plt.gca().spines['right'].set_visible(False)
 
+    plt.ylim(bottom=0)
+    if options.ymax is not None:
+        plt.ylim(top=options.ymax)
+
     plt.tight_layout()
+
+
+def main():
+    args = parse_args()
+
+    data = load_results(args.input)
+
+    plot(results=data, **args.model_dump())
 
     outfile = args.input.with_suffix('.pdf')
     print(f'Saving to {outfile}')
@@ -178,6 +200,7 @@ def main():
 
     if args.show:
         plt.show()
+
 
 if __name__ == '__main__':
     main()

@@ -11,6 +11,8 @@ from .utils import (
     download_if_not_exists,
     data_cache_dir,
 )
+from .types import Datasets
+
 
 # the indices of the animal classes (bird, cat, deer, dog, frog, and horse)
 positive_classe_indices = [2, 3, 4, 5, 6, 7]
@@ -49,19 +51,10 @@ class Cifar10Options(BaseModel):
     dataset: Literal['cifar10'] = 'cifar10'
 
 
-def load_cifar10():
+def load_cifar10() -> Datasets:
     return {
         'corrupted': {
             'soft_labels': load_cifar10h_soft_labels(),
             'labels': load_cifar10_labels(),
         }
     }
-
-
-# def load_cifar10() -> Datasets:
-#     return {
-#         'corrupted': Dataset(
-#             soft_labels=load_cifar10h_soft_labels(),
-#             labels=load_cifar10_labels(),
-#         )
-#     }

@@ -1,8 +1,11 @@
 from typing import Literal, TypedDict
+
 import numpy as np
 import numpy.typing as npt
 from pydantic import BaseModel
 from scipy.stats import multivariate_normal
+
+from .types import Datasets
 from .utils import generate_approximate_soft_labels
 
 rng = np.random.default_rng(42)
@@ -92,7 +95,7 @@ class SyntheticOptions(BaseModel):
     binom_noise: bool
 
 
-def load_synthetic(options: SyntheticOptions):
+def load_synthetic(options: SyntheticOptions) -> Datasets[Literal['clean', 'hard']]:
     data = generate_synthetic_data(
         n_samples=10000,
         n_hard_labels=options.n_hard_labels,

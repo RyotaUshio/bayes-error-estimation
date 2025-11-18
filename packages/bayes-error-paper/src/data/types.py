@@ -1,13 +1,12 @@
 import dataclasses
-from typing import TypedDict
-import numpy as np
-import numpy.typing as npt
+from typing import Literal, TypedDict
+import bestperf
 
 
 @dataclasses.dataclass
 class Dataset(TypedDict):
-    soft_labels: npt.NDArray[np.float64]
-    labels: npt.NDArray[np.float64]
+    soft_labels: bestperf.SoftLabels
+    labels: bestperf.Labels
 
 
-type Datasets = dict[str, Dataset]
+type Datasets[T: str] = dict[Literal['corrupted'] | T, Dataset]

@@ -9,6 +9,8 @@ from .utils import (
     binarize_soft_labels,
     data_cache_dir,
 )
+from .types import Datasets
+
 
 # the indices of the tops classes (Shirt, Dress, Coat, Pullover, and T-shirt/top)
 positive_classe_indices = [6, 3, 4, 2, 0]
@@ -57,7 +59,7 @@ class FashionMnistOptions(BaseModel):
     dataset: Literal['fashion_mnist']
 
 
-def load_fashion_mnist():
+def load_fashion_mnist() -> Datasets:
     return {
         'corrupted': {
             'soft_labels': load_fashion_mnist_soft_labels(),
