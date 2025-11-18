@@ -11,15 +11,8 @@ dependencies = []
 
 [dependency-groups]
 dev = [
-    "basedpyright>=1.33.0",
     "pytest>=9.0.1",
     "ruff>=0.14.5",
-]
-
-[tool.pyright]
-enableTypeIgnoreComments = true
-exclude = [
-    "**/notebooks",
 ]
 
 [tool.ruff]

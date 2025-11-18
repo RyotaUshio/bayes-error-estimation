@@ -19,5 +19,16 @@ dependencies = [
     "tqdm>=4.67.1",
 ]
 
+[dependency-groups]
+dev = [
+    "basedpyright>=1.33.0",
+]
+
 [tool.uv.sources]
 bestperf = { workspace = true }
+
+[tool.pyright]
+enableTypeIgnoreComments = true
+exclude = [
+    "**/notebooks",
+]

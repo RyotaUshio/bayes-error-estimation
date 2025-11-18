@@ -12,14 +12,6 @@ lint:
 lint-fix:
 	uv run ruff check --fix
 
-.PHONY: type
-type:
-	uv run basedpyright
-
 .PHONY: test
 test:
 	uv run pytest
-
-.PHONY: ipython
-ipython:
-	uv run --with ipython ipython

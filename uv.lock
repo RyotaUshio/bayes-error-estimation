@@ -148,7 +148,6 @@ source = { virtual = "." }
 
 [package.dev-dependencies]
 dev = [
-    { name = "basedpyright" },
     { name = "pytest" },
     { name = "ruff" },
 ]
@@ -157,7 +156,6 @@ dev = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "basedpyright", specifier = ">=1.33.0" },
     { name = "pytest", specifier = ">=9.0.1" },
     { name = "ruff", specifier = ">=0.14.5" },
 ]
@@ -178,6 +176,11 @@ dependencies = [
     { name = "tqdm" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "basedpyright" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "bestperf", editable = "packages/bestperf" },
@@ -191,6 +194,9 @@ requires-dist = [
     { name = "tqdm", specifier = ">=4.67.1" },
 ]
 
+[package.metadata.requires-dev]
+dev = [{ name = "basedpyright", specifier = ">=1.33.0" }]
+
 [[package]]
 name = "bestperf"
 version = "0.1.0"
@@ -202,6 +208,11 @@ dependencies = [
     { name = "uncertainty-calibration" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "basedpyright" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "betacal", specifier = ">=1.1.0" },
@@ -209,6 +220,9 @@ requires-dist = [
     { name = "scikit-learn", specifier = ">=1.6.1" },
     { name = "uncertainty-calibration", specifier = ">=0.1.4" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "basedpyright", specifier = ">=1.33.0" }]
 
 [[package]]
 name = "betacal"
