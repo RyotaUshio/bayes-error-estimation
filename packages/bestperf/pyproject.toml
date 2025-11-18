@@ -1,0 +1,19 @@
+[project]
+name = "bestperf"
+version = "0.1.0"
+description = "Estimate the best possible error rate (Bayes error) with calibrated soft labels"
+readme = "README.md"
+authors = [
+    { name = "RyotaUshio", email = "ushio@ms.k.u-tokyo.ac.jp" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "betacal>=1.1.0",
+    "numpy>=2.2.5",
+    "scikit-learn>=1.6.1",
+    "uncertainty-calibration>=0.1.4",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.9,<0.10.0"]
+build-backend = "uv_build"

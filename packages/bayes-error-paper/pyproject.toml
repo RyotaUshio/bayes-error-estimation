@@ -1,0 +1,24 @@
+[project]
+name = "bayes-error-paper"
+version = "0.1.0"
+description = "Code for the paper \"Practical estimation of the optimal classification error with soft labels and calibration\""
+readme = "README.md"
+authors = [
+    { name = "RyotaUshio", email = "ushio@ms.k.u-tokyo.ac.jp" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "bestperf",
+]
+
+[tool.uv.sources]
+bestperf = { workspace = true }
+
+[project.scripts]
+calib = "src.calibration.exp:main"
+figure2 = "src.bias.figure2:main"
+figure5 = "src.bias.figure5:main"
+figure6 = "src.bias.figure6:main"
+figure7_experiment = "src.bias.figure7_experiment:main"
+figure7_plot = "src.bias.figure7_plot:main"
+

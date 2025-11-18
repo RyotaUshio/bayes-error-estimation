@@ -1,8 +1,9 @@
 import numpy as np
-import numpy.typing as npt
+
+from .types import SoftLabels
 
 
-def bayes_error(soft_labels: npt.NDArray[np.float64]) -> float:
+def bayes_error(soft_labels: SoftLabels) -> float:
     """
     Compute the Bayes error from the given soft labels.
 

@@ -11,9 +11,3 @@ wheels/
 
 # Virtual environments
 .venv
-
-# Data
-data/*
-results*.json
-results/*
-*.pdf
