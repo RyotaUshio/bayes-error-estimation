@@ -19,7 +19,7 @@ dev = [
 [tool.pyright]
 enableTypeIgnoreComments = true
 exclude = [
-    "notebooks",
+    "**/notebooks",
 ]
 
 [tool.ruff]
