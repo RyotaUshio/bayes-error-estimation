@@ -19,3 +19,7 @@ type:
 .PHONY: test
 test:
 	uv run pytest
+
+.PHONY: ipython
+ipython:
+	uv run --with ipython ipython

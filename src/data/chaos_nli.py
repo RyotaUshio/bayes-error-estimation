@@ -1,10 +1,13 @@
-import zipfile
 import json
-from pathlib import Path
 import subprocess
+import zipfile
+from pathlib import Path
 from typing import Literal
+
 import numpy as np
-from .utils import binarize_soft_labels, binarize_hard_labels
+from pydantic import BaseModel
+
+from .utils import binarize_hard_labels, binarize_soft_labels
 
 type DatasetName = Literal['snli', 'mnli', 'abduptive_nli']
 
@@ -21,7 +24,7 @@ predictions_filenames: dict[DatasetName, str] = {
     'mnli': 'model_predictions/model_predictions_for_snli_mnli.json',
     'abduptive_nli': 'model_predictions/model_predictions_for_abdnli.json',
 }
-classes: dict[DatasetName, list[str]] = {
+classes: dict[DatasetName, list[str | int]] = {
     'snli': ['e', 'n', 'c'],
     'mnli': ['e', 'n', 'c'],
     'abduptive_nli': [1, 2],
@@ -113,22 +116,27 @@ def load_chaos_nli_from_file(dataset_name: DatasetName):
     return soft_labels, labels, sota_error
 
 
-def load_chaos_nli(dataset_name: DatasetName):
+class ChaosNliOptions(BaseModel):
+    dataset: DatasetName
+
+
+def load_chaos_nli(options: ChaosNliOptions):
     download_chaos_nli_if_not_exists()
-    soft_labels, labels, sota_error = load_chaos_nli_from_file(dataset_name)
+    soft_labels, labels, sota_error = load_chaos_nli_from_file(options.dataset)
 
     return {
-        'soft_labels_corrupted': soft_labels,
-        'labels': labels,
-        'sota_error': sota_error,
+        'corrupted': {
+            'soft_labels': soft_labels,
+            'labels': labels,
+        },
     }
 
 
-if __name__ == '__main__':
-    snli = load_chaos_nli('snli')
-    mnli = load_chaos_nli('mnli')
-    abduptive_nli = load_chaos_nli('abduptive_nli')
+# if __name__ == '__main__':
+#     snli = load_chaos_nli('snli')
+#     mnli = load_chaos_nli('mnli')
+#     abduptive_nli = load_chaos_nli('abduptive_nli')
 
-    print(f'SOTA error for SNLI: {snli["sota_error"]}')
-    print(f'SOTA error for MNLI: {mnli["sota_error"]}')
-    print(f'SOTA error for Abduptive NLI: {abduptive_nli["sota_error"]}')
+#     print(f'SOTA error for SNLI: {snli["sota_error"]}')
+#     print(f'SOTA error for MNLI: {mnli["sota_error"]}')
+#     print(f'SOTA error for Abduptive NLI: {abduptive_nli["sota_error"]}')

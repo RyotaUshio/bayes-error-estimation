@@ -5,11 +5,11 @@ import json
 import pickle
 import re
 from pathlib import Path
-from typing import Any, Iterable, Literal, TypedDict
+from typing import Any, Literal, TypedDict
 
 import numpy as np
 import openreview
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 
 def create_client_v1() -> openreview.Client:
@@ -139,8 +139,6 @@ class ICLRDataFetcher:
                         types.add(invitation.split('/')[-1])
 
         return types
-
-
 
 
 class Submission:
@@ -303,6 +301,7 @@ class Reviews:
 
 pattern = re.compile(r'(\d+): ')
 
+
 @dataclasses.dataclass
 class Review:
     rating: float
@@ -402,7 +401,22 @@ def load_iclr_year(year: int):
 
 class ICLROptions(BaseModel):
     dataset: Literal['iclr']
-    years: Iterable[int]
+    years: list[int] = list(range(2017, 2026))
+
+    @field_validator('years', mode='before')
+    @classmethod
+    def validate_years(cls, val):
+        if isinstance(val, str):
+            years = set()
+            for part in val.split(','):
+                if '-' in part:
+                    start, end = part.split('-')
+                    years.update(
+                        range(int(start or 2017), int(end or 2025) + 1)
+                    )
+                elif part:
+                    years.add(int(part))
+            return list(years)
 
 
 def load_iclr(options: ICLROptions):
@@ -418,6 +432,8 @@ def load_iclr(options: ICLROptions):
         labels.append(pair['hard_label'])
 
     return {
-        'soft_labels_corrupted': np.array(soft_labels_corrupted),
-        'labels': np.array(labels),
+        'corrupted': {
+            'soft_labels': np.array(soft_labels_corrupted),
+            'labels': np.array(labels),
+        }
     }

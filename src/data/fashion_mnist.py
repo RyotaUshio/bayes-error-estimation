@@ -1,5 +1,7 @@
 import gzip
+from typing import Literal
 import numpy as np
+from pydantic import BaseModel
 
 from .utils import (
     download_if_not_exists,
@@ -50,8 +52,14 @@ def load_fashion_mnist_soft_labels():
     return binarized
 
 
+class FashionMnistOptions(BaseModel):
+    dataset: Literal['fashion_mnist']
+
+
 def load_fashion_mnist():
     return {
-        'soft_labels_corrupted': load_fashion_mnist_soft_labels(),
-        'labels': load_fashion_mnist_labels(),
+        'corrupted': {
+            'soft_labels': load_fashion_mnist_soft_labels(),
+            'labels': load_fashion_mnist_labels(),
+        }
     }

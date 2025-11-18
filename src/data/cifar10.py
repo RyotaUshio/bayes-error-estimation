@@ -1,11 +1,14 @@
 import pickle
 import tarfile
+from typing import Literal
+
 import numpy as np
+from pydantic import BaseModel
 
 from .utils import (
-    download_if_not_exists,
     binarize_hard_labels,
     binarize_soft_labels,
+    download_if_not_exists,
 )
 
 # the indices of the animal classes (bird, cat, deer, dog, frog, and horse)
@@ -21,7 +24,7 @@ def load_cifar10_labels():
 
     # extract the original labels
     with tarfile.open(path, 'r:gz') as f:
-        with f.extractfile('cifar-10-batches-py/test_batch') as fo:
+        with f.extractfile('cifar-10-batches-py/test_batch') as fo:  # type: ignore
             original = np.array(pickle.load(fo, encoding='bytes')[b'labels'])
     # row each element of data, if it is in positive_classe_indices, set it to 1, otherwise set it to 0
     binarized = binarize_hard_labels(original, positive_classe_indices)
@@ -41,8 +44,23 @@ def load_cifar10h_soft_labels():
     return binarized
 
 
+class Cifar10Options(BaseModel):
+    dataset: Literal['cifar10'] = 'cifar10'
+
+
 def load_cifar10():
     return {
-        'soft_labels_corrupted': load_cifar10h_soft_labels(),
-        'labels': load_cifar10_labels(),
+        'corrupted': {
+            'soft_labels': load_cifar10h_soft_labels(),
+            'labels': load_cifar10_labels(),
+        }
     }
+
+
+# def load_cifar10() -> Datasets:
+#     return {
+#         'corrupted': Dataset(
+#             soft_labels=load_cifar10h_soft_labels(),
+#             labels=load_cifar10_labels(),
+#         )
+#     }

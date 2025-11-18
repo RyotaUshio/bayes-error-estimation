@@ -1,13 +1,22 @@
+from typing import Literal, TypedDict
 import numpy as np
+import numpy.typing as npt
+from pydantic import BaseModel
 from scipy.stats import multivariate_normal
 from .utils import generate_approximate_soft_labels
 
 rng = np.random.default_rng(42)
 
 
+class CleanSyntheticData(TypedDict):
+    soft_labels_clean: npt.NDArray[np.float64]
+    soft_labels_hard: npt.NDArray[np.float64]
+    labels: npt.NDArray[np.int64]
+
+
 def generate_synthetic_data(
     *, n_samples: int, n_hard_labels: int, means, covs, weights
-):
+) -> CleanSyntheticData:
     assert len(means) == len(covs) == len(weights) == 2
     # Create multivariate normal distributions
     dists = [multivariate_normal(mean, cov) for mean, cov in zip(means, covs)]
@@ -44,7 +53,9 @@ def generate_synthetic_data(
     }
 
 
-def corrupt_soft_labels(soft_labels, a, b, shuffle_fraction):
+def corrupt_soft_labels(
+    soft_labels, a, b, shuffle_fraction
+) -> npt.NDArray[np.float64]:
     def f(p, a, b):
         assert a >= 0
         assert b > 0 and b < 1
@@ -72,10 +83,19 @@ def shuffle_partial(arr, fraction):
     return result
 
 
-def load_synthetic(shuffle_fraction, a, b, n_hard_labels):
-    result = generate_synthetic_data(
+class SyntheticOptions(BaseModel):
+    dataset: Literal['synthetic'] = 'synthetic'
+    shuffle_fraction: float
+    a: float
+    b: float
+    n_hard_labels: int
+    binom_noise: bool
+
+
+def load_synthetic(options: SyntheticOptions):
+    data = generate_synthetic_data(
         n_samples=10000,
-        n_hard_labels=n_hard_labels,
+        n_hard_labels=options.n_hard_labels,
         means=[
             np.array([0, 0]),
             np.array([2, 2]),
@@ -86,10 +106,54 @@ def load_synthetic(shuffle_fraction, a, b, n_hard_labels):
         ],
         weights=[0.6, 0.4],
     )
-    result['soft_labels_corrupted'] = corrupt_soft_labels(
-        result['soft_labels_clean'], a=a, b=b, shuffle_fraction=shuffle_fraction
+    corrupted = corrupt_soft_labels(
+        data['soft_labels_clean'],
+        a=options.a,
+        b=options.b,
+        shuffle_fraction=options.shuffle_fraction,
     )
-    result['soft_labels_corrupted_hard'] = generate_approximate_soft_labels(
-        rng, result['soft_labels_corrupted'], n_hard_labels=n_hard_labels
-    )
-    return result
+
+    return {
+        'corrupted': {
+            'soft_labels': (
+                generate_approximate_soft_labels(
+                    rng,
+                    corrupted,
+                    n_hard_labels=options.n_hard_labels,
+                )
+                if options.binom_noise
+                else corrupted
+            ),
+            'labels': data['labels'],
+        },
+        'clean': {
+            'soft_labels': data['soft_labels_clean'],
+            'labels': data['labels'],
+        },
+        'hard': {
+            'soft_labels': data['soft_labels_hard'],
+            'labels': data['labels'],
+        },
+    }
+
+    # data['soft_labels_corrupted'] = (
+    #     generate_approximate_soft_labels(
+    #         rng,
+    #         data['soft_labels_corrupted'],
+    #         n_hard_labels=options.n_hard_labels,
+    #     )
+    #     if options.binom_noise
+    #     else corrupt_soft_labels(
+    #         data['soft_labels_clean'],
+    #         a=options.a,
+    #         b=options.b,
+    #         shuffle_fraction=options.shuffle_fraction,
+    #     )
+    # )
+
+    # result['soft_labels_corrupted_hard'] = generate_approximate_soft_labels(
+    #     rng,
+    #     result['soft_labels_corrupted'],
+    #     n_hard_labels=options.n_hard_labels,
+    # )
+    # return data

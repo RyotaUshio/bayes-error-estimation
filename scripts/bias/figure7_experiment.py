@@ -1,6 +1,7 @@
 import argparse
 import json
 from pathlib import Path
+from typing import Literal
 import numpy as np
 from tqdm import tqdm
 from data.synthetic import generate_synthetic_data
@@ -8,7 +9,10 @@ from data.uniform import generate_uniform_data
 from bayes_error import bayes_error
 
 
-def generate_data(distribution, m):
+type Distribution = Literal['a', 'b', 'c']
+
+
+def generate_data(distribution: Distribution, m):
     if distribution == 'a':
         return generate_synthetic_data(
             n_samples=2000,
@@ -58,7 +62,7 @@ def theoretical_bound(m, soft_labels):
     )
 
 
-def estimate_bayes_error(distribution, m):
+def estimate_bayes_error(distribution: Distribution, m: int):
     data = generate_data(distribution, m)
     return (
         bayes_error(data['soft_labels_clean']),
@@ -67,7 +71,7 @@ def estimate_bayes_error(distribution, m):
     )
 
 
-def get_bias_for_m(m, distribution):
+def get_bias_for_m(m: int, distribution: Distribution):
     print(f'Computing bias for distribution={distribution}, m={m}')
     expectation_of_estimator, true_bayes_error, theoretical = np.mean(
         [estimate_bayes_error(distribution, m) for _ in tqdm(range(1000))],

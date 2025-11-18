@@ -37,6 +37,10 @@ exclude = [
 ]
 
 [tool.pyright]
+enableTypeIgnoreComments = true
+exclude = [
+    "notebooks",
+]
 
 [tool.ruff]
 line-length = 80
