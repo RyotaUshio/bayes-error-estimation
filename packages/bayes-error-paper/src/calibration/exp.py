@@ -90,6 +90,7 @@ def run(config: ExperimentConfig) -> tuple[ExperimentData, Path]:
     outfile = data.save()
     return data, outfile
 
+
 def main():
     config = ExperimentConfig.from_commandline()
     _, outfile = run(config)
@@ -97,6 +98,7 @@ def main():
     print(
         f'To visualize the result, run: \nuv run -m src.calibration.plot {outfile}'
     )
+
 
 if __name__ == '__main__':
     main()

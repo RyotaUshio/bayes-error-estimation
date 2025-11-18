@@ -95,7 +95,9 @@ class SyntheticOptions(BaseModel):
     binom_noise: bool
 
 
-def load_synthetic(options: SyntheticOptions) -> Datasets[Literal['clean', 'hard']]:
+def load_synthetic(
+    options: SyntheticOptions,
+) -> Datasets[Literal['clean', 'hard']]:
     data = generate_synthetic_data(
         n_samples=10000,
         n_hard_labels=options.n_hard_labels,

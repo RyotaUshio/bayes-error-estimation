@@ -415,9 +415,7 @@ class ICLROptions(BaseModel):
         for part in val.split(','):
             if '-' in part:
                 start, end = part.split('-')
-                years.update(
-                    range(int(start or 2017), int(end or 2025) + 1)
-                )
+                years.update(range(int(start or 2017), int(end or 2025) + 1))
             elif part:
                 years.add(int(part))
         return list(years)

@@ -5,6 +5,7 @@ from tqdm import tqdm
 
 data_cache_dir = Path('./.data_cache')
 
+
 def download_if_not_exists(url, path):
     path = Path(path)
     if not path.exists():

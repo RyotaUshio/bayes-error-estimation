@@ -3,6 +3,7 @@ import argparse
 import json
 import matplotlib.pyplot as plt
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(

@@ -145,18 +145,6 @@ wheels = [
 name = "bayes-error"
 version = "0.1.0"
 source = { virtual = "." }
-dependencies = [
-    { name = "betacal" },
-    { name = "matplotlib" },
-    { name = "numpy" },
-    { name = "openreview-py" },
-    { name = "pydantic" },
-    { name = "requests" },
-    { name = "scikit-learn" },
-    { name = "scipy" },
-    { name = "tqdm" },
-    { name = "uncertainty-calibration" },
-]
 
 [package.dev-dependencies]
 dev = [
@@ -166,18 +154,6 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "betacal", specifier = ">=1.1.0" },
-    { name = "matplotlib", specifier = ">=3.10.3" },
-    { name = "numpy", specifier = ">=2.2.5" },
-    { name = "openreview-py", specifier = ">=1.54.0" },
-    { name = "pydantic", specifier = ">=2.12.4" },
-    { name = "requests", specifier = ">=2.32.3" },
-    { name = "scikit-learn", specifier = ">=1.6.1" },
-    { name = "scipy", specifier = ">=1.15.3" },
-    { name = "tqdm", specifier = ">=4.67.1" },
-    { name = "uncertainty-calibration", specifier = ">=0.1.4" },
-]
 
 [package.metadata.requires-dev]
 dev = [
@@ -192,15 +168,27 @@ version = "0.1.0"
 source = { virtual = "packages/bayes-error-paper" }
 dependencies = [
     { name = "bestperf" },
+    { name = "matplotlib" },
+    { name = "numpy" },
+    { name = "openreview-py" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
+    { name = "requests" },
+    { name = "scipy" },
+    { name = "tqdm" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "bestperf", editable = "packages/bestperf" },
+    { name = "matplotlib", specifier = ">=3.10.3" },
+    { name = "numpy", specifier = ">=2.2.6" },
+    { name = "openreview-py", specifier = ">=1.54.0" },
     { name = "pydantic", specifier = ">=2.12.4" },
     { name = "pydantic-settings", specifier = ">=2.12.0" },
+    { name = "requests", specifier = ">=2.32.3" },
+    { name = "scipy", specifier = ">=1.15.3" },
+    { name = "tqdm", specifier = ">=4.67.1" },
 ]
 
 [[package]]

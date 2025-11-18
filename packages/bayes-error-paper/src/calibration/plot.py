@@ -43,7 +43,6 @@ class PlotCliArgs(PlotOptions):
     show: bool = False
 
 
-
 def parse_args():
     return PlotCliArgs()  # type: ignore
 
@@ -70,7 +69,9 @@ def plot(results: dict[str, ExperimentResult], options: PlotOptions):
         'beta',
     ]
 
-    labels = [key for key in order if key in results and key not in options.omit]
+    labels = [
+        key for key in order if key in results and key not in options.omit
+    ]
     point_estimates = [results[label]['point_estimate'] for label in labels]
     error_low = [
         results[label]['point_estimate']
@@ -121,7 +122,9 @@ def plot(results: dict[str, ExperimentResult], options: PlotOptions):
         plt.xticks(x_pos, labels, rotation=45, ha='right')
 
         if options.tick_step:
-            plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(options.tick_step))
+            plt.gca().yaxis.set_major_locator(
+                ticker.MultipleLocator(options.tick_step)
+            )
 
         if options.hline is not None:
             xlim = plt.xlim()
@@ -161,7 +164,9 @@ def plot(results: dict[str, ExperimentResult], options: PlotOptions):
         plt.yticks(y_pos, labels)
 
         if options.tick_step:
-            plt.gca().xaxis.set_major_locator(ticker.MultipleLocator(options.tick_step))
+            plt.gca().xaxis.set_major_locator(
+                ticker.MultipleLocator(options.tick_step)
+            )
 
         if options.hline is not None:
             ylim = plt.ylim()
