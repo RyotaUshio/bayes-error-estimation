@@ -7,6 +7,7 @@ import bestperf
 import scipy.stats
 
 from ..data.load import load
+from ..data.types import Datasets
 from .utils.experiment_config import ExperimentConfig
 from .utils.experiment_data import (
     ExperimentData,
@@ -38,7 +39,7 @@ calibrators: dict[str, bestperf.Calibrator | None] = {
 }
 
 
-def get_metadata(datasets: dict) -> ExperimentMetadata:
+def get_metadata(datasets: Datasets) -> ExperimentMetadata:
     metadata: ExperimentMetadata = {'spearman_corr': None}
     if 'corrupted' in datasets and 'clean' in datasets:
         spearman_corr: float = scipy.stats.spearmanr(

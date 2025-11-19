@@ -13,41 +13,44 @@ type Distribution = Literal['a', 'b', 'c']
 
 
 def generate_data(distribution: Distribution, m):
-    if distribution == 'a':
-        return generate_synthetic_data(
-            n_samples=2000,
-            n_hard_labels=m,
-            means=[
-                [0, 0],
-                [2, 2],
-            ],
-            covs=[
-                np.eye(2),
-                np.eye(2),
-            ],
-            weights=[0.5, 0.5],
-        )
-    elif distribution == 'b':
-        return generate_synthetic_data(
-            n_samples=2000,
-            n_hard_labels=m,
-            means=[
-                [0, 0],
-                [0, 0],
-            ],
-            covs=[
-                np.eye(2),
-                np.eye(2),
-            ],
-            weights=[0.5, 0.5],
-        )
-    elif distribution == 'c':
-        return generate_uniform_data(
-            n_samples=2000,
-            n_hard_labels=m,
-            label_flip_rate=0.1,
-            weights=[0.5, 0.5],
-        )
+    match distribution:
+        case 'a':
+            return generate_synthetic_data(
+                n_samples=2000,
+                n_hard_labels=m,
+                means=[
+                    [0, 0],
+                    [2, 2],
+                ],
+                covs=[
+                    np.eye(2),
+                    np.eye(2),
+                ],
+                weights=[0.5, 0.5],
+            )
+        case 'b':
+            return generate_synthetic_data(
+                n_samples=2000,
+                n_hard_labels=m,
+                means=[
+                    [0, 0],
+                    [0, 0],
+                ],
+                covs=[
+                    np.eye(2),
+                    np.eye(2),
+                ],
+                weights=[0.5, 0.5],
+            )
+        case 'c':
+            return generate_uniform_data(
+                n_samples=2000,
+                n_hard_labels=m,
+                label_flip_rate=0.1,
+                weights=[0.5, 0.5],
+            )
+        case _:
+            raise ValueError(f'Unknown distribution: {distribution}')
 
 
 def theoretical_bound(m, soft_labels):
@@ -74,7 +77,10 @@ def estimate_bayes_error(distribution: Distribution, m: int):
 def get_bias_for_m(m: int, distribution: Distribution):
     print(f'Computing bias for distribution={distribution}, m={m}')
     expectation_of_estimator, true_bayes_error, theoretical = np.mean(
-        [estimate_bayes_error(distribution, m) for _ in tqdm(range(1000))],
+        [
+            estimate_bayes_error(distribution, m)
+            for _ in tqdm(range(1000))  # pyrefly: ignore[not-iterable]
+        ],
         axis=0,
     )
     bias = np.abs(expectation_of_estimator - true_bayes_error)

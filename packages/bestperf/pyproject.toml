@@ -14,11 +14,18 @@ dependencies = [
     "uncertainty-calibration>=0.1.4",
 ]
 
+[dependency-groups]
+dev = [
+    "basedpyright>=1.33.0",
+    "pyrefly>=0.42.1",
+]
+
 [build-system]
 requires = ["uv_build>=0.9.9,<0.10.0"]
 build-backend = "uv_build"
 
-[dependency-groups]
-dev = [
-    "basedpyright>=1.33.0",
+[tool.pyrefly]
+project-includes = [
+    "**/*.py*",
+    "**/*.ipynb",
 ]

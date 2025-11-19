@@ -22,6 +22,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "basedpyright>=1.33.0",
+    "pyrefly>=0.42.1",
     "pytest>=9.0.1",
 ]
 
@@ -33,3 +34,7 @@ enableTypeIgnoreComments = true
 exclude = [
     "**/notebooks",
 ]
+
+[tool.pyrefly]
+project-excludes = ["**/notebooks"]
+infer-with-first-use = false

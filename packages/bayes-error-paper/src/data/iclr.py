@@ -5,14 +5,20 @@ import json
 import pickle
 import re
 from pathlib import Path
-from typing import Any, Literal, TypedDict
+from typing import Any, Literal, TypedDict, cast
 
 import numpy as np
 import openreview
+import openreview.api  # necessary to make pyrefly happy
 from pydantic import BaseModel, field_validator
 
 from .types import Datasets
 from .utils import data_cache_dir
+
+
+# API v1 and v2 compatible types
+type Client = openreview.Client | openreview.api.OpenReviewClient  # pyright: ignore[reportAttributeAccessIssue]
+type Group = openreview.Group | openreview.api.client.Group  # pyright: ignore[reportAttributeAccessIssue]
 
 
 def create_client_v1() -> openreview.Client:
@@ -22,8 +28,8 @@ def create_client_v1() -> openreview.Client:
     return client
 
 
-def create_client_v2() -> openreview.Client:
-    client = openreview.api.OpenReviewClient(  # pyright: ignore
+def create_client_v2() -> openreview.api.OpenReviewClient:  # pyright: ignore[reportAttributeAccessIssue]
+    client = openreview.api.OpenReviewClient(  # pyright: ignore[reportAttributeAccessIssue]
         baseurl='https://api2.openreview.net',
     )
     return client
@@ -37,16 +43,11 @@ def get_venue_id(year: int) -> str:
     raise ValueError(f'Unsupported year: {year}')
 
 
-type Status = Literal[
-    'desk-rejected', 'under-review', 'withdrawn', 'accepted', 'rejected'
-]
-
-
 class ICLRDataFetcher:
-    client: openreview.Client
+    client: Client
     year: int
     venue_id: str
-    venue_group: openreview.Group
+    venue_group: Group
     is_v1: bool
 
     def __init__(self, year: int):
@@ -57,19 +58,6 @@ class ICLRDataFetcher:
         self.is_v1 = self.venue_group.domain is None
         if self.is_v1:
             self.client = create_client_v1()
-
-    def get_status_id(self, status: Status) -> str:
-        # https://docs.openreview.net/how-to-guides/data-retrieval-and-modification/how-to-get-all-notes-for-submissions-reviews-rebuttals-etc#quickstart-getting-all-submissions
-        status_key_map: dict[Status, str] = {
-            'desk-rejected': 'desk_rejected_venue_id',
-            'under-review': 'submission_venue_id ',
-            'withdrawn': 'withdrawn_venue_id',
-            'accepted': self.venue_id,
-            'rejected': 'UNKNOWN',
-        }
-        status_key = status_key_map[status]
-        status_id = self.venue_group.content[status_key]['value']  # type: ignore
-        return status_id
 
     def get_submissions(self) -> map[Submission]:
         submissions = self.get_submissions_from_cache()
@@ -112,10 +100,13 @@ class ICLRDataFetcher:
             ]
             details = 'replies'
 
-        submissions = self.client.get_all_notes(
-            invitation=f'{self.venue_id}/-/{submission_name}',
-            details=details,
-            **kwargs,
+        submissions = cast(
+            list[openreview.Note],
+            self.client.get_all_notes(
+                invitation=f'{self.venue_id}/-/{submission_name}',
+                details=details,
+                **kwargs,
+            ),
         )
 
         assert type(submissions) is list
@@ -363,8 +354,14 @@ class Review:
         return float(confidence_match.group(1))
 
 
-def get_value[T](x: dict[Literal['value'], T] | T) -> T | None:
-    return x.get('value') if isinstance(x, dict) else x
+def get_value[T: str | int | float](
+    x: dict[Literal['value'], T] | T,
+) -> T | None:
+    return (
+        x.get('value')
+        if isinstance(x, dict)
+        else x  # pyrefly: ignore[bad-return]
+    )
 
 
 def get_iclr_data_path(year: int) -> Path:

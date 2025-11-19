@@ -22,7 +22,7 @@ def download_if_not_exists(url, path):
                 unit='B',
                 unit_scale=True,
                 unit_divisor=1024,
-            ) as pbar,
+            ) as pbar,  # pyrefly: ignore[bad-context-manager]
         ):
             for chunk in response.iter_content(chunk_size=4096):
                 if chunk:
