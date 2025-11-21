@@ -1,8 +1,5 @@
 {
-  "dataset": {
-    "dataset": "iclr",
-    "years": [2020]
-  },
+  "dataset": "config/dataset/abduptive_nli.json",
   "bootstrap": {
     "n_resamples": 1000,
     "method": "basic"

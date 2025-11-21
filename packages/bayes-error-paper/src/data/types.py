@@ -1,9 +1,7 @@
-import dataclasses
 from typing import Literal, TypedDict
 import bestperf
 
 
-@dataclasses.dataclass
 class Dataset(TypedDict):
     soft_labels: bestperf.SoftLabels
     labels: bestperf.Labels

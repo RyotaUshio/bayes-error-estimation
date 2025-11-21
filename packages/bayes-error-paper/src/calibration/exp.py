@@ -3,7 +3,6 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 
-import bestperf
 import scipy.stats
 
 from ..data.load import load
@@ -15,28 +14,7 @@ from .utils.experiment_data import (
     ExperimentResult,
 )
 from .utils.run_experiment import run_experiment
-
-calibrators: dict[str, bestperf.Calibrator | None] = {
-    'corrupted': None,
-    'isotonic': lambda soft_labels, labels: bestperf.calibrate_isotonic(
-        soft_labels, labels
-    ),
-    'hist10': lambda soft_labels, labels: bestperf.calibrate_histogram_binning(
-        soft_labels, labels, 10
-    ),
-    'hist25': lambda soft_labels, labels: bestperf.calibrate_histogram_binning(
-        soft_labels, labels, 25
-    ),
-    'hist50': lambda soft_labels, labels: bestperf.calibrate_histogram_binning(
-        soft_labels, labels, 50
-    ),
-    'hist100': lambda soft_labels, labels: bestperf.calibrate_histogram_binning(
-        soft_labels, labels, 100
-    ),
-    'beta': lambda soft_labels, labels: bestperf.calibrate_beta(
-        soft_labels, labels
-    ),
-}
+from .calibrators import calibrators
 
 
 def get_metadata(datasets: Datasets) -> ExperimentMetadata:

@@ -1,0 +1,5 @@
+{
+  "dataset": "config/dataset/abduptive_nli.json",
+  "n_points": 101,
+  "sota": 0.1468668407310705
+}

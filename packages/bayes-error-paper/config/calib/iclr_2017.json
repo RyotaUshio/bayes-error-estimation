@@ -1,8 +1,5 @@
 {
-  "dataset": {
-    "dataset": "iclr",
-    "years": [2024]
-  },
+  "dataset": "config/dataset/iclr_2017.json",
   "bootstrap": {
     "n_resamples": 1000,
     "method": "basic"

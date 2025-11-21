@@ -1,8 +1,5 @@
 {
-  "dataset": {
-    "dataset": "iclr",
-    "years": [2025]
-  },
+  "dataset": "config/dataset/mnli.json",
   "bootstrap": {
     "n_resamples": 1000,
     "method": "basic"

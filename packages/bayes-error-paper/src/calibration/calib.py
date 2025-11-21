@@ -45,6 +45,7 @@ def main():
     plot(results, args)
     plot_path = args.output or results_json_path.with_suffix('.pdf')
     print(f'Saving to {plot_path}')
+    plot_path.parent.mkdir(parents=True, exist_ok=True)
     plt.savefig(plot_path, bbox_inches='tight')
 
     if args.open:
