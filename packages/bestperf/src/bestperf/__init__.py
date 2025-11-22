@@ -2,9 +2,12 @@ from .calibrate import (
     get_isotonic_calibrator as get_isotonic_calibrator,
     get_histogram_binning_calibrator as get_histogram_binning_calibrator,
     get_beta_calibrator as get_beta_calibrator,
+    get_platt_scaling_calibrator as get_platt_scaling_calibrator,
     calibrate_isotonic as calibrate_isotonic,
     calibrate_histogram_binning as calibrate_histogram_binning,
     calibrate_beta as calibrate_beta,
+    calibrate_platt_scaling as calibrate_platt_scaling,
+    BetaCalibrationParameters as BetaCalibrationParameters,
 )
 from .estimator import (
     bayes_error as bayes_error,

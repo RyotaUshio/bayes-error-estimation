@@ -4,14 +4,14 @@ import json
 from pathlib import Path
 from typing import ClassVar
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from .config import FeeBeeConfig
 from .result import FeeBeeResult
 
 
 class FeeBeeData(BaseModel):
-    outdir: ClassVar[Path] = Path('results')
+    outdir: ClassVar[Path] = Path('results/feebee')
 
     config: FeeBeeConfig
     results: dict[str, FeeBeeResult]
@@ -21,10 +21,14 @@ class FeeBeeData(BaseModel):
         return FeeBeeData.outdir / f'{config.hash()}.json'
 
     @staticmethod
-    def load(config: FeeBeeConfig) -> FeeBeeData:
-        outfile = FeeBeeData.get_outfile_path(config)
-        with open(outfile, 'r') as f:
-            return FeeBeeData.model_validate(json.load(f))
+    def load(config: FeeBeeConfig) -> FeeBeeData | None:
+        try:
+            outfile = FeeBeeData.get_outfile_path(config)
+            with open(outfile, 'r') as f:
+                return FeeBeeData.model_validate(json.load(f))
+        except (FileNotFoundError, json.JSONDecodeError, ValidationError):
+            return None
+
 
     def save(self) -> Path:
         outfile = FeeBeeData.get_outfile_path(self.config)

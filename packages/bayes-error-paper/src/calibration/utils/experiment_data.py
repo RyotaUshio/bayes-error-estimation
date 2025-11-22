@@ -13,7 +13,7 @@ class ExperimentMetadata(TypedDict):
 
 
 class ExperimentData(BaseModel):
-    outdir: ClassVar[Path] = Path('results')
+    outdir: ClassVar[Path] = Path('results/calib')
 
     config: ExperimentConfig
     results: dict[str, ExperimentResult]

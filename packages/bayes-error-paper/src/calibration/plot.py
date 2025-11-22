@@ -5,7 +5,7 @@ from typing import Annotated, Literal
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import ticker
-from pydantic import Field, TypeAdapter
+from pydantic import Field, TypeAdapter, ValidationError
 from pydantic_settings import BaseSettings, CliPositionalArg, SettingsConfigDict
 
 from .utils.experiment_result import ExperimentResult
@@ -47,13 +47,15 @@ def parse_args():
     return PlotCliArgs()  # type: ignore
 
 
-def load_results(input_path: Path) -> dict[str, ExperimentResult]:
-    with open(input_path, 'r') as f:
-        data = json.load(f)
-    if 'results' in data:
-        data = data['results']
-
-    return TypeAdapter(dict[str, ExperimentResult]).validate_python(data)
+def load_results(input_path: Path) -> dict[str, ExperimentResult] | None:
+    try:
+        with open(input_path, 'r') as f:
+            data = json.load(f)
+        if 'results' in data:
+            data = data['results']
+        return TypeAdapter(dict[str, ExperimentResult]).validate_python(data)
+    except (FileNotFoundError, json.JSONDecodeError, ValidationError):
+        return None
 
 
 def plot(results: dict[str, ExperimentResult], options: PlotOptions):
@@ -67,6 +69,10 @@ def plot(results: dict[str, ExperimentResult], options: PlotOptions):
         'hist50',
         'hist100',
         'beta',
+        'beta-am',
+        'beta-ab',
+        'beta-a',
+        'platt',
     ]
 
     labels = [

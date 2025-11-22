@@ -1,0 +1,7 @@
+{
+  "dataset": "config/dataset/cifar10.json",
+  "bootstrap": {
+    "n_resamples": 1000,
+    "method": "BCa"
+  }
+}
