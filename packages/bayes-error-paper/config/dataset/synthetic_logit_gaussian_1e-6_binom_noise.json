@@ -4,9 +4,9 @@
   "a": 2.0,
   "b": 0.7,
   "n_hard_labels": 50,
-  "binom_noise": false,
+  "binom_noise": true,
   "perturbation": {
     "type": "logit_gaussian",
-    "sigma": 0.01
+    "sigma": 1e-06
   }
 }

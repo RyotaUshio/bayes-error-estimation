@@ -1,5 +1,5 @@
 {
-  "dataset": "config/dataset/synthetic_logit_gaussian_1e-2.json",
+  "dataset": "config/dataset/synthetic_logit_gaussian_1e-5.json",
   "bootstrap": {
     "n_resamples": 1000,
     "method": "basic"

@@ -60,7 +60,23 @@ def load_data(args):
         with open(results_json_path, 'r') as f:
             file_data = json.load(f)
 
-        x = get_x(args.x, file_data)
+        stem = Path(config_file_path).stem
+        suffix = '_binom_noise'
+        noiseless_results = None
+        if stem.endswith(suffix):
+            noiseless_config_file_path = Path(config_file_path).with_stem(
+                stem[: -len(suffix)]
+            )
+            noiseless_config = ExperimentConfig.from_file(
+                noiseless_config_file_path
+            )
+            noiseless_results_json_path = ExperimentData.get_outfile_path(
+                noiseless_config
+            )
+            with open(noiseless_results_json_path, 'r') as f:
+                noiseless_results = json.load(f)
+
+        x = get_x(args.x, noiseless_results or file_data)
 
         methods = [key for key in order if key in file_data['results']]
 
@@ -112,7 +128,13 @@ def plot_results(data, args):
 
     cmap = plt.get_cmap('Set2')
     methods = [key for key in data['results'] if key not in omit]
-    colors = cmap(np.linspace(0, 1, len(methods)))
+    methods_calibrated = [method for method in methods if method != 'corrupted']
+    colors = [
+        'black'
+        if method == 'corrupted'
+        else cmap((methods_calibrated.index(method) + 1) / (len(methods_calibrated) + 1))
+        for method in methods
+    ]
     for method, color in zip(methods, colors):
         method_data = data['results'][method]
         zorder = 1 if method == 'isotonic' else 0

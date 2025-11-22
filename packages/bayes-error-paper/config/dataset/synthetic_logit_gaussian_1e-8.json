@@ -7,6 +7,6 @@
   "binom_noise": false,
   "perturbation": {
     "type": "logit_gaussian",
-    "sigma": 0.01
+    "sigma": 1e-08
   }
 }

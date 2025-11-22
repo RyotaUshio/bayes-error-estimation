@@ -1,0 +1,7 @@
+{
+  "dataset": "config/dataset/synthetic_logit_gaussian_1e-7_binom_noise.json",
+  "bootstrap": {
+    "n_resamples": 1000,
+    "method": "basic"
+  }
+}

@@ -45,3 +45,6 @@ def main():
     outfile.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(outfile, bbox_inches='tight')
     print(f'Saved to {outfile}')
+
+if __name__ == '__main__':
+    main()
