@@ -1,0 +1,12 @@
+{
+  "dataset": "synthetic",
+  "shuffle_fraction": 0.0,
+  "a": 2.0,
+  "b": 0.7,
+  "n_hard_labels": 50,
+  "binom_noise": false,
+  "perturbation": {
+    "type": "logit_gaussian",
+    "sigma": 1.0
+  }
+}

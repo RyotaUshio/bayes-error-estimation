@@ -5,6 +5,7 @@ import json
 from hashlib import sha256
 from pathlib import Path
 from typing import Literal, TypedDict
+from warnings import deprecated
 
 from pydantic import BaseModel, field_validator
 
@@ -27,13 +28,14 @@ class ExperimentConfig(BaseModel):
     def validate_dataset(cls, val):
         if not isinstance(val, str):
             return val
-        
+
         # if a string is given, assume it's a path to a dataset config file
         with open(val, 'r') as f:
             data = json.load(f)
 
         return data
 
+    @deprecated('Use file-based config and from_file instead.')
     @staticmethod
     def from_commandline() -> ExperimentConfig:
         parser = argparse.ArgumentParser()

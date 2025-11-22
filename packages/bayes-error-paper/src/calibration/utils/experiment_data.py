@@ -10,6 +10,7 @@ from .experiment_result import ExperimentResult
 
 class ExperimentMetadata(TypedDict):
     spearman_corr: float | None
+    kendall_corr: float | None
 
 
 class ExperimentData(BaseModel):

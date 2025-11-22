@@ -51,6 +51,7 @@ def main():
         data, results_json_path = run(config)
         results = data.results
 
+    print(f'Results: {results_json_path}')
     plot(results, args)
     plot_path = args.output or results_json_path.with_suffix('.pdf')
     print(f'Saving to {plot_path}')

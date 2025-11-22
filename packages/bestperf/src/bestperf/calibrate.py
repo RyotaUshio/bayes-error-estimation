@@ -1,4 +1,5 @@
 from typing import Literal
+
 from calibration import HistogramCalibrator
 from betacal import BetaCalibration
 from sklearn.isotonic import IsotonicRegression

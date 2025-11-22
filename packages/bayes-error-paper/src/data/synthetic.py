@@ -1,8 +1,12 @@
-from typing import Literal, TypedDict
+from __future__ import annotations
 
+from typing import Annotated, Literal, TypedDict, Union
+
+import bestperf
 import numpy as np
 import numpy.typing as npt
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from scipy.special import expit, logit
 from scipy.stats import multivariate_normal
 
 from .types import Datasets
@@ -57,14 +61,40 @@ def generate_synthetic_data(
 
 
 def corrupt_soft_labels(
-    soft_labels, a, b, shuffle_fraction
-) -> npt.NDArray[np.float64]:
+    soft_labels: bestperf.SoftLabels,
+    a: float,
+    b: float,
+    shuffle_fraction: float,
+    perturbation: PerturbationOptions | None = None,
+) -> bestperf.SoftLabels:
     def f(p, a, b):
         assert a >= 0
         assert b > 0 and b < 1
         return 1 / (1 + ((1 - p) / p) ** (1 / a) * ((1 - b) / b))
 
-    return shuffle_partial(f(soft_labels, a, b), shuffle_fraction)
+    def perturb(
+        soft_labels: bestperf.SoftLabels, perturbation: PerturbationOptions
+    ) -> bestperf.SoftLabels:
+        match perturbation['type']:
+            case 'logit_gaussian':
+                sigma = perturbation['sigma']
+                logits = logit(soft_labels)
+                noisy_logits = logits + rng.normal(0, sigma, size=logits.shape)
+                noisy_soft_labels = expit(noisy_logits)
+                return noisy_soft_labels
+            case _:
+                raise ValueError(
+                    f'Unknown perturbation type: {perturbation["type"]}'
+                )
+
+    corrupted_soft_labels = f(soft_labels, a, b)
+    if shuffle_fraction > 0:
+        corrupted_soft_labels = shuffle_partial(
+            corrupted_soft_labels, shuffle_fraction
+        )
+    if perturbation is not None:
+        corrupted_soft_labels = perturb(corrupted_soft_labels, perturbation)
+    return corrupted_soft_labels
 
 
 def shuffle_partial(arr, fraction):
@@ -86,6 +116,16 @@ def shuffle_partial(arr, fraction):
     return result
 
 
+class LogitGaussianPerturbationOptions(TypedDict):
+    type: Literal['logit_gaussian']
+    sigma: float
+
+
+type PerturbationOptions = Annotated[
+    Union[LogitGaussianPerturbationOptions], Field(discriminator='type')
+]
+
+
 class SyntheticOptions(BaseModel):
     dataset: Literal['synthetic'] = 'synthetic'
     shuffle_fraction: float
@@ -93,6 +133,7 @@ class SyntheticOptions(BaseModel):
     b: float
     n_hard_labels: int
     binom_noise: bool
+    perturbation: PerturbationOptions | None = None
 
 
 def load_synthetic(
@@ -116,6 +157,7 @@ def load_synthetic(
         a=options.a,
         b=options.b,
         shuffle_fraction=options.shuffle_fraction,
+        perturbation=options.perturbation,
     )
 
     return {
@@ -140,25 +182,3 @@ def load_synthetic(
             'labels': data['labels'],
         },
     }
-
-    # data['soft_labels_corrupted'] = (
-    #     generate_approximate_soft_labels(
-    #         rng,
-    #         data['soft_labels_corrupted'],
-    #         n_hard_labels=options.n_hard_labels,
-    #     )
-    #     if options.binom_noise
-    #     else corrupt_soft_labels(
-    #         data['soft_labels_clean'],
-    #         a=options.a,
-    #         b=options.b,
-    #         shuffle_fraction=options.shuffle_fraction,
-    #     )
-    # )
-
-    # result['soft_labels_corrupted_hard'] = generate_approximate_soft_labels(
-    #     rng,
-    #     result['soft_labels_corrupted'],
-    #     n_hard_labels=options.n_hard_labels,
-    # )
-    # return data

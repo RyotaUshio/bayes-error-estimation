@@ -18,13 +18,19 @@ from .calibrators import calibrators
 
 
 def get_metadata(datasets: Datasets) -> ExperimentMetadata:
-    metadata: ExperimentMetadata = {'spearman_corr': None}
+    metadata: ExperimentMetadata = {'spearman_corr': None, 'kendall_corr': None}
     if 'corrupted' in datasets and 'clean' in datasets:
         spearman_corr: float = scipy.stats.spearmanr(
             datasets['clean']['soft_labels'],
             datasets['corrupted']['soft_labels'],
         ).statistic  # type: ignore
         metadata['spearman_corr'] = spearman_corr
+
+        kendall_corr: float = scipy.stats.kendalltau(
+            datasets['clean']['soft_labels'],
+            datasets['corrupted']['soft_labels'],
+        ).statistic  # type: ignore
+        metadata['kendall_corr'] = kendall_corr
     return metadata
 
 
