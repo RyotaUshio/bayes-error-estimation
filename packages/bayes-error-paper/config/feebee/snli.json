@@ -1,0 +1,5 @@
+{
+  "dataset": "config/dataset/snli.json",
+  "n_points": 101,
+  "sota": 0.09709379128137384
+}

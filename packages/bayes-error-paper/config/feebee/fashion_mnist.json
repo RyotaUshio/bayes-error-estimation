@@ -1,0 +1,5 @@
+{
+  "dataset": "config/dataset/fashion_mnist.json",
+  "n_points": 101,
+  "sota": 0.0049
+}

@@ -1,0 +1,5 @@
+{
+  "dataset": "config/dataset/mnli.json",
+  "n_points": 101,
+  "sota": 0.1438398999374609
+}

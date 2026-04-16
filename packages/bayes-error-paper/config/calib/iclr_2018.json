@@ -1,0 +1,4 @@
+{
+  "dataset": "config/dataset/iclr_2018.json",
+  "bootstrap": { "n_resamples": 1000, "method": "basic" }
+}

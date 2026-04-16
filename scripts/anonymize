@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+uvx unname -o .unname/code --exclude scripts/anonymize
+zip .unname/code.zip -r .unname/code

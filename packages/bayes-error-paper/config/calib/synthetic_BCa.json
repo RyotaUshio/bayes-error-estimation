@@ -1,0 +1,7 @@
+{
+  "dataset": "config/dataset/synthetic.json",
+  "bootstrap": {
+    "n_resamples": 1000,
+    "method": "BCa"
+  }
+}

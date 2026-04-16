@@ -1,0 +1,7 @@
+{
+  "dataset": "config/dataset/snli.json",
+  "bootstrap": {
+    "n_resamples": 1000,
+    "method": "basic"
+  }
+}

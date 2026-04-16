@@ -7,22 +7,20 @@ authors = [
     { name = "Ryota Ushio", email = "ushio@ms.k.u-tokyo.ac.jp" }
 ]
 requires-python = ">=3.13"
-dependencies = [
-    "betacal>=1.1.0",
-    "matplotlib>=3.10.3",
-    "numpy>=2.2.5",
-    "requests>=2.32.3",
-    "scikit-learn>=1.6.1",
-    "scipy>=1.15.3",
-    "tqdm>=4.67.1",
-    "uncertainty-calibration>=0.1.4",
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.5",
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[tool.ruff]
+line-length = 80
 
-[tool.ty.src]
-exclude = [
-    "notebooks",
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.uv.workspace]
+members = [
+    "packages/*"
 ]

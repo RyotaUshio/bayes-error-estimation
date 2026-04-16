@@ -1,0 +1,5 @@
+{
+  "dataset": "config/dataset/cifar10.json",
+  "n_points": 101,
+  "sota": 0.0005
+}

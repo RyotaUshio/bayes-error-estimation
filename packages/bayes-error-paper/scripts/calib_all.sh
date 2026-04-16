@@ -1,0 +1,5 @@
+./scripts/calib_synthetic.sh "$@"
+./scripts/calib_cifar10.sh "$@"
+./scripts/calib_fashion_mnist.sh "$@"
+./scripts/calib_iclr.sh "$@"
+./scripts/calib_chaos_nli.sh "$@"

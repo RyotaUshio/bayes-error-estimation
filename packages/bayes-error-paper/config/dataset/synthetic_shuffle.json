@@ -1,0 +1,8 @@
+{
+  "dataset": "synthetic",
+  "shuffle_fraction": 0.1,
+  "a": 2.0,
+  "b": 0.7,
+  "n_hard_labels": 50,
+  "binom_noise": false
+}

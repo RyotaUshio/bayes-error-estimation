@@ -12,8 +12,5 @@ wheels/
 # Virtual environments
 .venv
 
-# Data
-data/*
-results*.json
-results/*
-*.pdf
+# unname outputs
+.unname
